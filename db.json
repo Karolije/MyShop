@@ -10,18 +10,46 @@
       "passwordHash": "489cd5dbc708c7e541de4d7cd91ce6d0f1613573b7fc5b40d3942ccb9555cf35"
     }
   ],
-  "products": [ {
-    "id": 1,
-    "name": "Produkt 1",
-    "description": "Opis produktu 1",
-    "price": 99.99,
-    "imageUrl": "https://picsum.photos/100"  },
-  {
-    "id": 2,
-    "name": "Produkt 2",
-    "description": "Opis produktu 2",
-    "price": 49.5,
-    "imageUrl": "https://picsum.photos/100"
-  }],
-  "orders": []
+  "products": [
+    {
+      "id": 1,
+      "name": "Produkt 1",
+      "description": "Opis produktu 1",
+      "price": 99.99,
+      "imageUrl": "https://picsum.photos/100"
+    },
+    {
+      "id": 2,
+      "name": "Produkt 2",
+      "description": "Opis produktu 2",
+      "price": 49.5,
+      "imageUrl": "https://picsum.photos/100"
+    }
+  ],
+  "orders": [
+    {
+      "id": "b9dc",
+      "userId": "7553",
+      "items": [
+        {
+          "productId": 1,
+          "quantity": 1
+        }
+      ],
+      "date": "2025-08-04T10:42:21.474Z",
+      "status": "w przygotowaniu"
+    },
+    {
+      "id": "67ab",
+      "userId": "7553",
+      "products": [
+        {
+          "productId": 1,
+          "quantity": 1
+        }
+      ],
+      "createdAt": "2025-08-04T10:54:51.082Z",
+      "status": "w przygotowaniu"
+    }
+  ]
 }

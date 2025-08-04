@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import type { Product } from "../types/Product";
 import { useCart } from "../context/CartContext";
 import Cart from "./Cart";
+import OrderForm from "./OrderForm";
+
 const ProductList = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +34,10 @@ const { addToCart } = useCart()
         <button onClick={() => addToCart(p)}>Dodaj do koszyka</button>
       </li>
     ))}
-  </ul>  <Cart/>  </>
+  </ul>  
+  <Cart/> 
+  <OrderForm/>
+   </>
 
   );
 };
