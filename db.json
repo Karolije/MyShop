@@ -1,16 +1,27 @@
 {
   "users": [
     {
-      "id": "dba6",
+      "id": "7553",
       "firstName": "qwe",
-      "lastName": "qwer",
+      "lastName": "qwe",
       "birthDate": "1997-11-11",
-      "login": "zxss",
-      "email": "vvv@op.pl",
-      "password": "ddd",
-      "passwordHash": "ZGRk"
+      "login": "qwe",
+      "email": "Karolina.jedrajczyk@gmail.com",
+      "passwordHash": "489cd5dbc708c7e541de4d7cd91ce6d0f1613573b7fc5b40d3942ccb9555cf35"
     }
   ],
-  "products": [],
+  "products": [ {
+    "id": 1,
+    "name": "Produkt 1",
+    "description": "Opis produktu 1",
+    "price": 99.99,
+    "imageUrl": "https://picsum.photos/100"  },
+  {
+    "id": 2,
+    "name": "Produkt 2",
+    "description": "Opis produktu 2",
+    "price": 49.5,
+    "imageUrl": "https://picsum.photos/100"
+  }],
   "orders": []
 }
