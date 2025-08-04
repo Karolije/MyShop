@@ -1,0 +1,16 @@
+{
+  "users": [
+    {
+      "id": "dba6",
+      "firstName": "qwe",
+      "lastName": "qwer",
+      "birthDate": "1997-11-11",
+      "login": "zxss",
+      "email": "vvv@op.pl",
+      "password": "ddd",
+      "passwordHash": "ZGRk"
+    }
+  ],
+  "products": [],
+  "orders": []
+}
