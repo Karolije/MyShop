@@ -1,19 +1,34 @@
 import { useState, useEffect } from "react";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import type { User } from "../types/User";
 import { hashPassword } from "../utils/hashPassword";
+
+type LayoutContext = {
+  setUser: React.Dispatch<React.SetStateAction<string | null>>;
+};
 
 const LoginForm = () => {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
+  const navigate = useNavigate();
+
+  // Pobierz setUser z Layout przez Outlet context
+  const { setUser } = useOutletContext<LayoutContext>();
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (userId) {
       fetch(`http://localhost:3000/users/${userId}`)
         .then(res => res.json())
-        .then((user: User) => setLoggedUser(user))
-        .catch(() => localStorage.removeItem("userId"));
+        .then((user: User) => {
+          setLoggedUser(user);
+          setUser(localStorage.getItem("user")); // synchronizacja
+        })
+        .catch(() => {
+          localStorage.removeItem("userId");
+          setUser(null);
+        });
     }
   }, []);
 
@@ -32,19 +47,24 @@ const LoginForm = () => {
 
     const user = users[0];
     if (user.passwordHash === passwordHash) {
+      localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("userId", String(user.id));
       setLoggedUser(user);
+      setUser(JSON.stringify(user));  // <-- tutaj aktualizujesz stan w Layout
       setLogin("");
       setPassword("");
       alert(`Zalogowano jako ${user.firstName}`);
+      navigate("/"); // przekierowanie po zalogowaniu
     } else {
       alert("Błędne hasło");
     }
   };
 
   const handleLogout = () => {
+    localStorage.removeItem("user");
     localStorage.removeItem("userId");
     setLoggedUser(null);
+    setUser(null);  // synchronizacja z Layout
   };
 
   if (loggedUser) {

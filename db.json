@@ -12,14 +12,14 @@
   ],
   "products": [
     {
-      "id": 1,
+      "id": "1",
       "name": "Produkt 1",
       "description": "Opis produktu 1",
       "price": 99.99,
       "imageUrl": "https://picsum.photos/100"
     },
     {
-      "id": 2,
+      "id": "2",
       "name": "Produkt 2",
       "description": "Opis produktu 2",
       "price": 49.5,
@@ -50,6 +50,18 @@
       ],
       "createdAt": "2025-08-04T10:54:51.082Z",
       "status": "w przygotowaniu"
+    },
+    {
+      "id": "bf04",
+      "userId": 7553,
+      "items": [
+        {
+          "productId": "1",
+          "quantity": 1
+        }
+      ],
+      "status": "w przygotowaniu",
+      "createdAt": "2025-08-04T11:48:01.928Z"
     }
   ]
 }
