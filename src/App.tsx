@@ -5,6 +5,9 @@ import AdminPage from './pages/AdminPage';
 import ProductList from './components/ProductList';
 import Cart from './components/Cart';
 import CreateOrder from './pages/CrateOrder';
+import OrderForm from './components/OrderForm';
+import OrderHistory from './components/OrderHistory';
+
 const App = () => {
   return (
     <Routes>
@@ -15,6 +18,7 @@ const App = () => {
       <Route path="/products" element={<ProductList />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/create-order" element={<CreateOrder />} />
+      <Route path="/order-history" element={<OrderHistory />} />
 
     </Routes>
   );
