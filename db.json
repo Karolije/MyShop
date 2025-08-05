@@ -49,31 +49,19 @@
   ],
   "orders": [
     {
-      "id": "b9dc",
-      "userId": "7553",
+      "id": "0343",
+      "userId": 7553,
       "items": [
         {
-          "productId": 1,
+          "productId": "1",
           "quantity": 1
         }
       ],
-      "date": "2025-08-04T10:42:21.474Z",
-      "status": "w przygotowaniu"
+      "status": "wysłane",
+      "createdAt": "2025-08-05T07:32:43.411Z"
     },
     {
-      "id": "67ab",
-      "userId": "7553",
-      "products": [
-        {
-          "productId": 1,
-          "quantity": 1
-        }
-      ],
-      "createdAt": "2025-08-04T10:54:51.082Z",
-      "status": "w przygotowaniu"
-    },
-    {
-      "id": "bf04",
+      "id": "97b6",
       "userId": 7553,
       "items": [
         {
@@ -82,35 +70,35 @@
         }
       ],
       "status": "w przygotowaniu",
-      "createdAt": "2025-08-04T11:48:01.928Z"
+      "createdAt": "2025-08-05T07:39:29.524Z"
     },
     {
-      "id": "700d",
-      "userId": "7553",
-      "products": [
+      "id": "a41d",
+      "userId": 7553,
+      "items": [
         {
           "productId": "1",
           "quantity": 1
         },
         {
-          "productId": "4",
-          "quantity": 1
-        }
-      ],
-      "createdAt": "2025-08-04T18:39:32.882Z",
-      "status": "w przygotowaniu"
-    },
-    {
-      "id": "a20a",
-      "userId": 7553,
-      "items": [
-        {
-          "productId": "3",
+          "productId": "2",
           "quantity": 1
         }
       ],
       "status": "w przygotowaniu",
-      "createdAt": "2025-08-05T06:37:12.308Z"
+      "createdAt": "2025-08-05T07:39:45.724Z"
+    },
+    {
+      "id": "c5bc",
+      "userId": 7553,
+      "items": [
+        {
+          "productId": "2",
+          "quantity": 3
+        }
+      ],
+      "status": "w przygotowaniu",
+      "createdAt": "2025-08-05T07:42:32.335Z"
     }
   ]
 }

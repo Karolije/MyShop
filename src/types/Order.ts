@@ -1,14 +1,11 @@
-
-export type OrderStatus = 'w przygotowaniu' | 'wysłane' | 'odebrane' | 'zwrot';
-export type OrderItem = {
-  productId: number;
-  quantity: number;
-};
-
 export type Order = {
-  id: number;
-  userId: string;
-  products: OrderItem[];  // to się nazywa 'products', nie 'items'
-  status: "w przygotowaniu" | "wysłane" | "odebrane" | "zwrot";
+  id: string;
+  userId: number;
+  status: string;
   createdAt: string;
+  items: {
+    productId: string;
+    quantity: number;
+  }[];
 };
+export type OrderStatus = "nowe" | "w realizacji" | "zrealizowane" | "wysłane" | "zwrot" | "odebrane";

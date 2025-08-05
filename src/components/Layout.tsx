@@ -21,7 +21,7 @@ const Layout = () => {
     <div>
       <header style={{ background: "#eee", padding: "1rem" }}>
         <nav style={{ display: "flex", gap: "1rem" }}>
-          <Link to="/products">Produkty</Link>
+      <Link to="/products">Produkty</Link>
 
           {user ? (
             <>
@@ -40,7 +40,7 @@ const Layout = () => {
       </header>
 
       <main style={{ padding: "2rem" }}>
-        <Outlet context={{ setUser }} />
+      <Outlet context={{ user, setUser }} />
       </main>
 
       <footer style={{ textAlign: "center", padding: "1rem", background: "#eee" }}>

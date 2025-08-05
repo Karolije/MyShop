@@ -17,13 +17,11 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
-    // Przy inicjalizacji spróbuj odczytać z localStorage:
     const saved = localStorage.getItem("cart");
     return saved ? JSON.parse(saved) : [];
   });
 
   useEffect(() => {
-    // Za każdym razem, gdy cartItems się zmienia, zapisujemy do localStorage:
     localStorage.setItem("cart", JSON.stringify(cartItems));
   }, [cartItems]);
 

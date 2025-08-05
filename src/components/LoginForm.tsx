@@ -13,7 +13,6 @@ const LoginForm = () => {
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
   const navigate = useNavigate();
 
-  // Pobierz setUser z Layout przez Outlet context
   const { setUser } = useOutletContext<LayoutContext>();
 
   useEffect(() => {
@@ -23,7 +22,7 @@ const LoginForm = () => {
         .then(res => res.json())
         .then((user: User) => {
           setLoggedUser(user);
-          setUser(localStorage.getItem("user")); // synchronizacja
+          setUser(localStorage.getItem("user")); 
         })
         .catch(() => {
           localStorage.removeItem("userId");
@@ -50,11 +49,11 @@ const LoginForm = () => {
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("userId", String(user.id));
       setLoggedUser(user);
-      setUser(JSON.stringify(user));  // <-- tutaj aktualizujesz stan w Layout
+      setUser(JSON.stringify(user));  
       setLogin("");
       setPassword("");
       alert(`Zalogowano jako ${user.firstName}`);
-      navigate("/"); // przekierowanie po zalogowaniu
+      navigate("/");
     } else {
       alert("Błędne hasło");
     }
@@ -64,7 +63,7 @@ const LoginForm = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("userId");
     setLoggedUser(null);
-    setUser(null);  // synchronizacja z Layout
+    setUser(null);  
   };
 
   if (loggedUser) {

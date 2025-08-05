@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import type { Order } from "../types/Order";
 
 const OrderHistory = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
     if (!userId) {
-      setError("Musisz być zalogowany, aby zobaczyć historię zamówień.");
-      setLoading(false);
+      navigate("/login");
       return;
     }
 
@@ -27,7 +28,7 @@ const OrderHistory = () => {
         setError(err.message);
         setLoading(false);
       });
-  }, []);
+  }, [navigate]);
 
   if (loading) return <p>Ładowanie historii zamówień...</p>;
   if (error) return <p>{error}</p>;
@@ -38,22 +39,28 @@ const OrderHistory = () => {
       <h2>Historia zamówień</h2>
       <ul>
         {orders.map(order => (
-          <li key={order.id} style={{ marginBottom: "1rem", borderBottom: "1px solid #ccc", paddingBottom: "0.5rem" }}>
+          <li
+            key={order.id}
+            style={{
+              marginBottom: "1rem",
+              borderBottom: "1px solid #ccc",
+              paddingBottom: "0.5rem",
+            }}
+          >
             <p><strong>ID zamówienia:</strong> {order.id}</p>
             <p><strong>Status:</strong> {order.status}</p>
             <p><strong>Data:</strong> {new Date(order.createdAt).toLocaleString()}</p>
             <p><strong>Produkty:</strong></p>
             <ul>
-            {Array.isArray(order.products) ? (
-  order.products.map(({ productId, quantity }) => (
-    <li key={productId}>
-      Produkt ID: {productId}, ilość: {quantity}
-    </li>
-  ))
-) : (
-  <li>Brak danych o produktach</li>
-)}
-
+              {Array.isArray(order.items) ? (
+                order.items.map(({ productId, quantity }) => (
+                  <li key={productId}>
+                    Produkt ID: {productId}, ilość: {quantity}
+                  </li>
+                ))
+              ) : (
+                <li>Brak danych o produktach</li>
+              )}
             </ul>
           </li>
         ))}

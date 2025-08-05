@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Order, OrderStatus } from "../types/Order";
 
 const ORDER_STATUSES: OrderStatus[] = [
-  "w przygotowaniu",
+  "w realizacji",
   "wysłane",
   "odebrane",
   "zwrot",
@@ -20,7 +20,6 @@ const AdminOrders = () => {
         return res.json();
       })
       .then((data: Order[]) => {
-        console.log("Pobrane zamówienia:", data); // debug log
         setOrders(data);
         setLoading(false);
       })
@@ -30,7 +29,7 @@ const AdminOrders = () => {
       });
   }, []);
 
-  const updateStatus = async (orderId: number, status: OrderStatus) => {
+  const updateStatus = async (orderId: string, status: OrderStatus) => {
     try {
       const res = await fetch(`http://localhost:3000/orders/${orderId}`, {
         method: "PATCH",
@@ -54,7 +53,7 @@ const AdminOrders = () => {
   return (
     <div>
       <h1>Historia zamówień</h1>
-      <table>
+      <table style={{ borderCollapse: "collapse", width: "100%" }}>
         <thead>
           <tr>
             <th>ID</th>
@@ -72,8 +71,8 @@ const AdminOrders = () => {
               <td>{order.userId}</td>
               <td>
                 <ul>
-                  {Array.isArray(order.products) ? (
-                    order.products.map(({ productId, quantity }) => (
+                  {Array.isArray(order.items) ? (
+                    order.items.map(({ productId, quantity }) => (
                       <li key={productId}>
                         Produkt {productId} — ilość: {quantity}
                       </li>

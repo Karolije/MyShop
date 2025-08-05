@@ -39,8 +39,12 @@ Możesz użyć [Vite](https://vite.dev/) do przygotowania środowiska z opcją `
 > 🎁 *Zacznij od razu. Skorzystaj z **[szablonu README i wskazówek](https://github.com/devmentor-pl/readme-template)**.* 
 
 
+ABY URUCHOMIĆ:
+
 npm install
 
 npx json-server --watch db.json --port 3000
 
 npm run dev
+
+panel admina: http://localhost:5173/admin.html
