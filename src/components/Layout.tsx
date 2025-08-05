@@ -27,7 +27,7 @@ const Layout = () => {
             <>
               <Link to="/cart">Koszyk</Link>
               <Link to="/create-order">Zamówienie</Link>
-              <Link to="/order-history">Zamówienia</Link>
+              <Link to="/order-history">Historia zamówień</Link>
               <button onClick={handleLogout}>Wyloguj</button>
             </>
           ) : (
@@ -40,7 +40,6 @@ const Layout = () => {
       </header>
 
       <main style={{ padding: "2rem" }}>
-        {/* Przekaż setUser jako prop do outletów */}
         <Outlet context={{ setUser }} />
       </main>
 

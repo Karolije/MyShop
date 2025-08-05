@@ -53,7 +53,7 @@ const AdminOrders = () => {
 
   return (
     <div>
-      <h1>Zamówienia</h1>
+      <h1>Historia zamówień</h1>
       <table>
         <thead>
           <tr>

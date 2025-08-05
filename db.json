@@ -13,17 +13,38 @@
   "products": [
     {
       "id": "1",
-      "name": "Produkt 1",
-      "description": "Opis produktu 1",
-      "price": 99.99,
-      "imageUrl": "https://picsum.photos/100"
+      "name": "Kubek Poranny",
+      "description": "Idealny do porannej kawy lub herbaty. Klasyczny design i wygodny uchwyt.",
+      "price": 29.99,
+      "imageUrl": "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400"
     },
     {
       "id": "2",
-      "name": "Produkt 2",
-      "description": "Opis produktu 2",
-      "price": 49.5,
-      "imageUrl": "https://picsum.photos/100"
+      "name": "Kubek Minimalistyczny",
+      "description": "Biały, elegancki kubek bez żadnych nadruków. Doskonały na prezent.",
+      "price": 34.99,
+      "imageUrl": "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400"
+    },
+    {
+      "id": "3",
+      "name": "Kubek z Lisem",
+      "description": "Kubek z uroczym rysunkiem lisa. Dla miłośników zwierząt i natury.",
+      "price": 39.99,
+      "imageUrl": "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400"
+    },
+    {
+      "id": "4",
+      "name": "Kubek Termiczny 'Outdoor'",
+      "description": "Kubek termiczny utrzymujący ciepło do 6h. Idealny na wypady w góry.",
+      "price": 59.99,
+      "imageUrl": "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400"
+    },
+    {
+      "id": "5",
+      "name": "Kubek Artystyczny",
+      "description": "Ręcznie malowany kubek z kolorowymi wzorami. Każdy egzemplarz jest unikatowy.",
+      "price": 44.9,
+      "imageUrl": "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=400"
     }
   ],
   "orders": [
@@ -62,6 +83,34 @@
       ],
       "status": "w przygotowaniu",
       "createdAt": "2025-08-04T11:48:01.928Z"
+    },
+    {
+      "id": "700d",
+      "userId": "7553",
+      "products": [
+        {
+          "productId": "1",
+          "quantity": 1
+        },
+        {
+          "productId": "4",
+          "quantity": 1
+        }
+      ],
+      "createdAt": "2025-08-04T18:39:32.882Z",
+      "status": "w przygotowaniu"
+    },
+    {
+      "id": "a20a",
+      "userId": 7553,
+      "items": [
+        {
+          "productId": "3",
+          "quantity": 1
+        }
+      ],
+      "status": "w przygotowaniu",
+      "createdAt": "2025-08-05T06:37:12.308Z"
     }
   ]
 }
