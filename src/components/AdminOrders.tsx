@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import type { Order, OrderStatus } from "../types/Order";
+import { supabase } from "../supabaseClient";
 
 const ORDER_STATUSES: OrderStatus[] = [
+  "nowe",
   "w realizacji",
+  "zrealizowane",
   "wysłane",
-  "odebrane",
   "zwrot",
+  "odebrane",
 ];
 
 const AdminOrders = () => {
@@ -14,34 +17,40 @@ const AdminOrders = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("http://localhost:3000/orders")
-      .then((res) => {
-        if (!res.ok) throw new Error("Błąd pobierania zamówień");
-        return res.json();
-      })
-      .then((data: Order[]) => {
-        setOrders(data);
+    const fetchOrders = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("orders")
+          .select("*")
+          .order("createdAt", { ascending: false });
+
+        if (error) throw error;
+        setOrders(data ?? []);
+      } catch (err: any) {
+        console.error("Błąd pobierania zamówień:", err);
+        setError(err.message);
+      } finally {
         setLoading(false);
-      })
-      .catch((e) => {
-        setError(e.message);
-        setLoading(false);
-      });
+      }
+    };
+
+    fetchOrders();
   }, []);
 
   const updateStatus = async (orderId: string, status: OrderStatus) => {
     try {
-      const res = await fetch(`http://localhost:3000/orders/${orderId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status }),
-      });
-      if (!res.ok) throw new Error("Błąd aktualizacji statusu");
+      const { error } = await supabase
+        .from("orders")
+        .update({ status })
+        .eq("id", orderId);
+
+      if (error) throw error;
 
       setOrders((prev) =>
         prev.map((o) => (o.id === orderId ? { ...o, status } : o))
       );
-    } catch (e) {
+    } catch (err) {
+      console.error("Nie udało się zaktualizować statusu:", err);
       alert("Nie udało się zaktualizować statusu");
     }
   };
@@ -71,7 +80,7 @@ const AdminOrders = () => {
               <td>{order.userId}</td>
               <td>
                 <ul>
-                  {Array.isArray(order.items) ? (
+                  {Array.isArray(order.items) && order.items.length > 0 ? (
                     order.items.map(({ productId, quantity }) => (
                       <li key={productId}>
                         Produkt {productId} — ilość: {quantity}

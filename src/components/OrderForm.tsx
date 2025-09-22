@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useCart } from "../context/CartContext";
-import type { Order, OrderItem } from "../types/Order";
+import { supabase } from "../supabaseClient";
 
 const OrderForm = () => {
   const { cartItems, clearCart } = useCart();
@@ -19,33 +19,37 @@ const OrderForm = () => {
 
     setLoading(true);
 
-    const items: OrderItem[] = cartItems.map(({ product, quantity }) => ({
-      productId: product.id,
-      quantity,
-    }));
-    type NewOrder = Omit<Order, 'id'>;
-
-    const order: NewOrder = {
-        userId,
-        products: items,
-        createdAt: new Date().toISOString(),
-        status: "w przygotowaniu",
-      };
-      
-
     try {
-      const res = await fetch("http://localhost:3000/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(order),
-      });
+      const { data: orderData, error: orderError } = await supabase
+        .from("orders")
+        .insert({
+          userId: Number(userId),
+          status: "w przygotowaniu",
+          createdAt: new Date().toISOString(),
+        })
+        .select()
+        .single();
 
-      if (!res.ok) throw new Error("Błąd podczas składania zamówienia");
+      if (orderError || !orderData) throw orderError;
+
+      const orderId = orderData.id;
+
+      const itemsToInsert = cartItems.map(({ product, quantity }) => ({
+        orderId,
+        productId: product.id,
+        quantity,
+      }));
+
+      const { error: itemsError } = await supabase
+        .from("order_items")
+        .insert(itemsToInsert);
+
+      if (itemsError) throw itemsError;
 
       alert("Zamówienie zostało złożone!");
       clearCart();
-    } catch (err) {
-      alert(`Coś poszło nie tak: ${err}`);
+    } catch (err: any) {
+      alert(`Coś poszło nie tak: ${err.message || err}`);
     } finally {
       setLoading(false);
     }

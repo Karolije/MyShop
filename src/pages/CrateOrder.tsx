@@ -1,5 +1,6 @@
 import { useCart } from "../context/CartContext";
 import { useState } from "react";
+import { supabase } from "../supabaseClient";
 
 const CreateOrder = () => {
   const { cartItems, clearCart } = useCart();
@@ -11,31 +12,45 @@ const CreateOrder = () => {
       return;
     }
 
+    const userId = Number(localStorage.getItem("userId"));
+    if (!userId) {
+      alert("Musisz się zalogować, aby złożyć zamówienie.");
+      return;
+    }
+
     setLoading(true);
 
     const order = {
-      userId: Number(localStorage.getItem("userId")),
-      items: cartItems.map(({ product, quantity }) => ({
-        productId: product.id,
-        quantity,
-      })),
+      userId,
       status: "w przygotowaniu",
       createdAt: new Date().toISOString(),
     };
 
-    const res = await fetch("http://localhost:3000/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(order),
-    });
+    try {
+      const { data: newOrder, error: orderError } = await supabase
+        .from("orders")
+        .insert(order)
+        .select()
+        .single();
 
-    setLoading(false);
+      if (orderError || !newOrder) throw new Error("Błąd przy tworzeniu zamówienia");
 
-    if (res.ok) {
+      const items = cartItems.map(({ product, quantity }) => ({
+        orderId: newOrder.id,
+        productId: product.id,
+        quantity,
+      }));
+
+      const { error: itemsError } = await supabase.from("order_items").insert(items);
+
+      if (itemsError) throw new Error("Błąd przy dodawaniu produktów do zamówienia");
+
       alert("Zamówienie zostało utworzone!");
       clearCart();
-    } else {
-      alert("Coś poszło nie tak...");
+    } catch (err: any) {
+      alert(`Coś poszło nie tak: ${err.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 

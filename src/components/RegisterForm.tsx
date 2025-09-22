@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { hashPassword } from "../utils/hashPassword";
 import type { User } from "../types/User";
+import { supabase } from "../supabaseClient";
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -21,7 +22,7 @@ const RegisterForm = () => {
 
     const passwordHash = await hashPassword(formData.password);
 
-    const user: User = {
+    const user: Omit<User, "id"> = {
       firstName: formData.firstName,
       lastName: formData.lastName,
       birthDate: formData.birthDate,
@@ -30,23 +31,73 @@ const RegisterForm = () => {
       passwordHash,
     };
 
-    await fetch("http://localhost:3000/users", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(user),
-    });
+    try {
+      const { data, error } = await supabase
+        .from("users")
+        .insert(user)
+        .select()
+        .single();
 
-    alert("Zarejestrowano!");
+      if (error) throw error;
+
+      alert(`Zarejestrowano użytkownika ${data.firstName}`);
+      setFormData({
+        firstName: "",
+        lastName: "",
+        birthDate: "",
+        login: "",
+        email: "",
+        password: "",
+      });
+    } catch (err: any) {
+      alert(`Coś poszło nie tak: ${err.message}`);
+    }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <input name="firstName" placeholder="Imię" onChange={handleChange} required />
-      <input name="lastName" placeholder="Nazwisko" onChange={handleChange} required />
-      <input name="birthDate" type="date" onChange={handleChange} required />
-      <input name="login" placeholder="Login" onChange={handleChange} required />
-      <input name="email" type="email" onChange={handleChange} required />
-      <input name="password" type="password" onChange={handleChange} required />
+      <input
+        name="firstName"
+        placeholder="Imię"
+        value={formData.firstName}
+        onChange={handleChange}
+        required
+      />
+      <input
+        name="lastName"
+        placeholder="Nazwisko"
+        value={formData.lastName}
+        onChange={handleChange}
+        required
+      />
+      <input
+        name="birthDate"
+        type="date"
+        value={formData.birthDate}
+        onChange={handleChange}
+        required
+      />
+      <input
+        name="login"
+        placeholder="Login"
+        value={formData.login}
+        onChange={handleChange}
+        required
+      />
+      <input
+        name="email"
+        type="email"
+        value={formData.email}
+        onChange={handleChange}
+        required
+      />
+      <input
+        name="password"
+        type="password"
+        value={formData.password}
+        onChange={handleChange}
+        required
+      />
       <button type="submit">Zarejestruj</button>
     </form>
   );

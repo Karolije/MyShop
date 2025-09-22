@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import type { User } from "../types/User";
+import { supabase } from "../supabaseClient";
 import { hashPassword } from "../utils/hashPassword";
 
 type LayoutContext = {
@@ -12,34 +13,49 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
   const navigate = useNavigate();
-
   const { setUser } = useOutletContext<LayoutContext>();
 
   useEffect(() => {
     const userId = localStorage.getItem("userId");
-    if (userId) {
-      fetch(`http://localhost:3000/users/${userId}`)
-        .then(res => res.json())
-        .then((user: User) => {
-          setLoggedUser(user);
-          setUser(localStorage.getItem("user")); 
-        })
-        .catch(() => {
-          localStorage.removeItem("userId");
-          setUser(null);
-        });
-    }
-  }, []);
+    if (!userId) return;
+
+    const fetchUser = async () => {
+      const { data, error } = await supabase
+        .from<User>("users")
+        .select("*")
+        .eq("id", Number(userId)) 
+        .single();
+
+      if (data) {
+        setLoggedUser(data);
+        setUser(JSON.stringify(data));
+      } else {
+        localStorage.removeItem("userId");
+        setUser(null);
+      }
+    };
+
+    fetchUser();
+  }, [setUser]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!login || !password) return;
+
     const passwordHash = await hashPassword(password);
 
-    const res = await fetch(`http://localhost:3000/users?login=${encodeURIComponent(login)}`);
-    const users: User[] = await res.json();
+    const { data: users, error } = await supabase
+      .from<User>("users")
+      .select("*")
+      .eq("login", login); 
 
-    if (users.length === 0) {
+    if (error) {
+      alert("Błąd logowania");
+      return;
+    }
+
+    if (!users || users.length === 0) {
       alert("Nie ma takiego użytkownika");
       return;
     }
@@ -49,7 +65,7 @@ const LoginForm = () => {
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("userId", String(user.id));
       setLoggedUser(user);
-      setUser(JSON.stringify(user));  
+      setUser(JSON.stringify(user));
       setLogin("");
       setPassword("");
       alert(`Zalogowano jako ${user.firstName}`);
@@ -63,13 +79,15 @@ const LoginForm = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("userId");
     setLoggedUser(null);
-    setUser(null);  
+    setUser(null);
   };
 
   if (loggedUser) {
     return (
       <div>
-        <p>Zalogowano jako: {loggedUser.firstName} {loggedUser.lastName}</p>
+        <p>
+          Zalogowano jako: {loggedUser.firstName} {loggedUser.lastName}
+        </p>
         <button onClick={handleLogout}>Wyloguj</button>
       </div>
     );
@@ -81,7 +99,7 @@ const LoginForm = () => {
         name="login"
         placeholder="Login"
         value={login}
-        onChange={e => setLogin(e.target.value)}
+        onChange={(e) => setLogin(e.target.value)}
         required
       />
       <input
@@ -89,7 +107,7 @@ const LoginForm = () => {
         type="password"
         placeholder="Hasło"
         value={password}
-        onChange={e => setPassword(e.target.value)}
+        onChange={(e) => setPassword(e.target.value)}
         required
       />
       <button type="submit">Zaloguj</button>
