@@ -3,6 +3,8 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import type { User } from "../types/User";
 import { supabase } from "../supabaseClient";
 import { hashPassword } from "../utils/hashPassword";
+import "./LoginForm.css"; 
+
 
 type LayoutContext = {
   setUser: React.Dispatch<React.SetStateAction<string | null>>;

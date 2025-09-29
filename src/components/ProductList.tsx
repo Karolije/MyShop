@@ -45,6 +45,10 @@ const ProductList = () => {
   if (products.length === 0) return <p>Brak produktów.</p>;
 
   return (
+    <main className="main">
+    <h1 className="shop-title">Witamy w naszym sklepie!</h1>
+    <p className="shop-subtitle">Sprawdź nasze bestsellery i dodaj je do koszyka!</p>
+  
     <div className="product-list">
       {products.map((p) => (
         <div className="product-card" key={p.id}>
@@ -63,6 +67,8 @@ const ProductList = () => {
         </div>
       ))}
     </div>
+  </main>
+  
   );
 };
 
