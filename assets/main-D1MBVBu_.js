@@ -1,4 +1,4 @@
-import{r as s,j as d,s as L,R as Te,a as Me}from"./supabaseClient-Czq_rhEw.js";/**
+import{r as s,j as d,s as L,R as Te,a as Me}from"./supabaseClient-vN21F6BB.js";/**
  * react-router v7.7.1
  *
  * Copyright (c) Remix Software Inc.
