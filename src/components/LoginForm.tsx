@@ -8,7 +8,7 @@ import "./LoginForm.css";
 // Typ wiersza w tabeli
 // -------------------------
 export type User = {
-  id?: number; // id opcjonalne, bo Supabase generuje je automatycznie
+  id?: number; // id opcjonalne, Supabase generuje je automatycznie
   firstName: string;
   lastName: string;
   birthDate: string;
@@ -29,7 +29,11 @@ const LoginForm = () => {
   const [password, setPassword] = useState("");
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
   const navigate = useNavigate();
-  const { setUser } = useOutletContext<LayoutContext>();
+
+  // Bezpieczne pobranie kontekstu
+  const context = useOutletContext<LayoutContext>();
+  if (!context) throw new Error("Outlet context not found");
+  const { setUser } = context;
 
   // Sprawdzenie zalogowanego użytkownika przy mount
   useEffect(() => {
@@ -37,16 +41,24 @@ const LoginForm = () => {
     if (!userId) return;
 
     const fetchUser = async () => {
-      const { data } = await supabase
-        .from<User>("users") 
-        .select("*")
-        .eq("id", Number(userId))
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from("users")
+          .select("*")
+          .eq("id", Number(userId))
+          .single();
 
-      if (data) {
-        setLoggedUser(data);
-        setUser(JSON.stringify(data));
-      } else {
+        if (error) throw error;
+
+        if (data) {
+          setLoggedUser(data);
+          setUser(JSON.stringify(data));
+        } else {
+          localStorage.removeItem("userId");
+          setUser(null);
+        }
+      } catch (err) {
+        console.error("Błąd pobierania użytkownika:", err);
         localStorage.removeItem("userId");
         setUser(null);
       }
@@ -64,7 +76,7 @@ const LoginForm = () => {
       const passwordHash = await hashPassword(password);
 
       const { data: users, error } = await supabase
-        .from<User>("users") // <- tylko jeden typ
+        .from("users")
         .select("*")
         .eq("login", login);
 
@@ -82,7 +94,7 @@ const LoginForm = () => {
       const user = users[0];
       if (user.passwordHash === passwordHash) {
         localStorage.setItem("user", JSON.stringify(user));
-        localStorage.setItem("userId", String(user.id));
+        localStorage.setItem("userId", String(user.id!));
         setLoggedUser(user);
         setUser(JSON.stringify(user));
         setLogin("");
