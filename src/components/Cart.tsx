@@ -1,14 +1,13 @@
 import { useCart } from "../context/CartContext";
 import { supabase } from "../supabaseClient";
+import "./Cart.css";
 
 const Cart = () => {
   const { cartItems, removeFromCart, clearCart } = useCart();
   const user = JSON.parse(localStorage.getItem("user") || "{}");
 
-  console.log("User z localStorage:", user);
-  console.log("Cart items:", cartItems);
-
-  if (cartItems.length === 0) return <p>Koszyk jest pusty.</p>;
+  if (cartItems.length === 0)
+    return <p className="empty-cart">Koszyk jest pusty 🛒</p>;
 
   const handleOrder = async () => {
     if (!user?.id) {
@@ -17,36 +16,25 @@ const Cart = () => {
     }
 
     try {
-      // Wstawiamy zamówienie
       const { data: newOrderData, error: orderError } = await supabase
-      .from("orders")
-      .insert([{ userId: user.id, status: "w przygotowaniu" }])
-      .select();
-
-      console.log("newOrderData:", newOrderData);
-      console.log("orderError:", orderError);
-
-      if (orderError) throw orderError;
-      if (!newOrderData || newOrderData.length === 0) throw new Error("Nie udało się utworzyć zamówienia");
-
-      const newOrder = newOrderData[0];
-
-      // Przygotowujemy produkty do wstawienia
-      const itemsToInsert = cartItems.map(item => ({
-        orderId: newOrder.id,
-        productId: item.product.id,
-        quantity: item.quantity
-      }));
-
-      console.log("Items to insert:", itemsToInsert);
-
-      const { data: itemsData, error: itemsError } = await supabase
-        .from("order_items")
-        .insert(itemsToInsert)
+        .from("orders")
+        .insert([{ userId: user.id, status: "w przygotowaniu" }])
         .select();
 
-      console.log("itemsData:", itemsData);
-      console.log("itemsError:", itemsError);
+      if (orderError) throw orderError;
+      if (!newOrderData || newOrderData.length === 0)
+        throw new Error("Nie udało się utworzyć zamówienia");
+
+      const newOrder = newOrderData[0];
+      const itemsToInsert = cartItems.map((item) => ({
+        orderId: newOrder.id,
+        productId: item.product.id,
+        quantity: item.quantity,
+      }));
+
+      const { error: itemsError } = await supabase
+        .from("order_items")
+        .insert(itemsToInsert);
 
       if (itemsError) throw itemsError;
 
@@ -59,18 +47,20 @@ const Cart = () => {
   };
 
   return (
-    <div>
+    <div className="cart-container">
       <h2>Koszyk</h2>
-      <ul>
-        {cartItems.map(item => (
-          <li key={item.product.id}>
+      <ul className="cart-list">
+        {cartItems.map((item) => (
+          <li className="cart-item" key={item.product.id}>
             {item.product.name} — ilość: {item.quantity}
             <button onClick={() => removeFromCart(item.product.id)}>Usuń</button>
           </li>
         ))}
       </ul>
-      <button onClick={clearCart}>Wyczyść koszyk</button>
-      <button onClick={handleOrder}>Zamów</button>
+      <div className="cart-actions">
+        <button onClick={clearCart}>Wyczyść koszyk</button>
+        <button onClick={handleOrder}>Zamów</button>
+      </div>
     </div>
   );
 };

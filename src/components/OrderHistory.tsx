@@ -2,18 +2,19 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 
+type Product = {
+  id: number;
+  name: string;
+  price: number;
+};
+
 type OrderItem = {
-  productId: number;
   quantity: number;
-  product: {
-    id: number;
-    name: string;
-    price: number;
-  };
+  product: Product;
 };
 
 type Order = {
-  id: string;
+  id: number;
   status: string;
   createdAt: string;
   items: OrderItem[];
@@ -25,57 +26,84 @@ const OrderHistory = () => {
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  const fetchOrders = async () => {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (!user?.id) {
+      navigate("/MyShop/login");
+      return;
+    }
+
+    try {
+      const { data: ordersData, error: ordersError } = await supabase
+        .from("orders")
+        .select(`
+          id,
+          status,
+          createdAt,
+          order_items (
+            quantity,
+            product:products (
+              id,
+              name,
+              price
+            )
+          )
+        `)
+        .eq("userId", user.id)
+        .order("createdAt", { ascending: false });
+
+      if (ordersError) throw ordersError;
+
+      const formattedOrders: Order[] = (ordersData || []).map(order => ({
+        id: order.id,
+        status: order.status,
+        createdAt: order.createdAt,
+        items: (order.order_items || []).map((item: any) => ({
+          quantity: item.quantity,
+          product: item.product,
+        })),
+      }));
+
+      setOrders(formattedOrders);
+    } catch (err: any) {
+      console.error("Błąd pobierania historii zamówień:", err);
+      setError(err.message || "Nieznany błąd");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteOrder = async (orderId: number) => {
+    const confirmDelete = window.confirm("Czy na pewno chcesz usunąć to zamówienie?");
+    if (!confirmDelete) return;
+
+    try {
+      // Najpierw usuwamy powiązane produkty
+      const { error: itemsError } = await supabase
+        .from("order_items")
+        .delete()
+        .eq("orderId", orderId);
+      if (itemsError) throw itemsError;
+
+      // Następnie zamówienie
+      const { error: orderError } = await supabase
+        .from("orders")
+        .delete()
+        .eq("id", orderId);
+      if (orderError) throw orderError;
+
+      // Odświeżamy listę
+      setOrders(prev => prev.filter(o => o.id !== orderId));
+      alert("Zamówienie zostało usunięte!");
+    } catch (err: any) {
+      console.error("Błąd usuwania zamówienia:", err);
+      alert("Nie udało się usunąć zamówienia: " + (err.message || JSON.stringify(err)));
+    }
+  };
+
   useEffect(() => {
-    const fetchOrders = async () => {
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-      if (!user?.id) {
-        navigate("/login");
-        return;
-      }
-
-      try {
-        const { data: ordersData, error: ordersError } = await supabase
-          .from("orders")
-          .select("*")
-          .eq("userId", user.id);
-
-        if (ordersError) throw ordersError;
-
-        if (!ordersData || ordersData.length === 0) {
-          setOrders([]);
-          setLoading(false);
-          return;
-        }
-
-        const { data: itemsData, error: itemsError } = await supabase
-          .from("order_items")
-          .select("orderId, quantity, products(id, name, price)")
-          .in("orderId", ordersData.map(order => order.id));
-
-        if (itemsError) throw itemsError;
-
-        const ordersWithItems = ordersData.map(order => ({
-          ...order,
-          items: itemsData
-            ?.filter(item => item.orderId === order.id)
-            .map(item => ({
-              productId: item.products[0].id,
-              quantity: item.quantity,
-              product: item.products[0],
-            })) || [],
-        }));
-
-        setOrders(ordersWithItems);
-      } catch (err: any) {
-        console.error("Błąd pobierania historii zamówień:", err);
-        setError(err.message || "Nieznany błąd");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchOrders();
-  }, [navigate]);
+  }, []);
 
   if (loading) return <p>Ładowanie historii zamówień...</p>;
   if (error) return <p>{error}</p>;
@@ -100,8 +128,8 @@ const OrderHistory = () => {
             <p><strong>Produkty:</strong></p>
             <ul>
               {order.items.length > 0 ? (
-                order.items.map(item => (
-                  <li key={item.productId}>
+                order.items.map((item, index) => (
+                  <li key={index}>
                     {item.product.name} — ilość: {item.quantity} — cena: {item.product.price.toFixed(2)} zł
                   </li>
                 ))
@@ -109,6 +137,20 @@ const OrderHistory = () => {
                 <li>Brak produktów</li>
               )}
             </ul>
+            <button
+              style={{
+                backgroundColor: "#ff6b6b",
+                color: "#fff",
+                border: "none",
+                padding: "0.4rem 0.8rem",
+                borderRadius: "6px",
+                cursor: "pointer",
+                marginTop: "0.5rem",
+              }}
+              onClick={() => handleDeleteOrder(order.id)}
+            >
+              Usuń zamówienie
+            </button>
           </li>
         ))}
       </ul>

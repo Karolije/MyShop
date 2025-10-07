@@ -59,46 +59,6 @@
       ],
       "status": "wysłane",
       "createdAt": "2025-08-05T07:32:43.411Z"
-    },
-    {
-      "id": "97b6",
-      "userId": 7553,
-      "items": [
-        {
-          "productId": "1",
-          "quantity": 1
-        }
-      ],
-      "status": "w przygotowaniu",
-      "createdAt": "2025-08-05T07:39:29.524Z"
-    },
-    {
-      "id": "a41d",
-      "userId": 7553,
-      "items": [
-        {
-          "productId": "1",
-          "quantity": 1
-        },
-        {
-          "productId": "2",
-          "quantity": 1
-        }
-      ],
-      "status": "w przygotowaniu",
-      "createdAt": "2025-08-05T07:39:45.724Z"
-    },
-    {
-      "id": "c5bc",
-      "userId": 7553,
-      "items": [
-        {
-          "productId": "2",
-          "quantity": 3
-        }
-      ],
-      "status": "w przygotowaniu",
-      "createdAt": "2025-08-05T07:42:32.335Z"
     }
   ]
 }
